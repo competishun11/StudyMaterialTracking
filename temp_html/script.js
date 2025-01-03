@@ -12,7 +12,8 @@ document
     var xhr = new XMLHttpRequest();
     xhr.open(
       "GET",
-      "https://docs.google.com/spreadsheets/d/1fMjDdGK9IIs7lm_jc0f-dj6V0MKHehZu8e3mx5EwhoY/edit?usp=sharing",
+      // "https://docs.google.com/spreadsheets/d/1fMjDdGK9IIs7lm_jc0f-dj6V0MKHehZu8e3mx5EwhoY/edit?usp=sharing",
+      "https://docs.google.com/spreadsheets/d/1atSTdqPBzv_wi8DiAiUd0k9wLbmLia--iGQW1ZsN6_k/edit?gid=0#gid=0",
       true
     );
     xhr.responseType = "arraybuffer";
@@ -33,6 +34,7 @@ document
         // Start from row 2 to skip header
         var mobileCell =
           sheet[XLSX.utils.encode_cell({ r: rowNum, c: pad + 1 })];
+          console.log("rowNum : ",rowNum,"data : ",mobileCell);
         // console.log("object", mobileCell);
         if (mobileCell && mobileCell.v == mobileNumber) {
           var studentNameCell =
