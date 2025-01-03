@@ -4,10 +4,16 @@ import MainLayout from "./layouts/MainLayout";
 import AuthLayout from "./layouts/AuthLayout";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
-import StudentDetails from "./pages/StudentDetails";
+import Dashboard from "./pages/Dashboard"; // Import the Dashboard component
 import NotFound from "./pages/NotFound";
 import AuthProvider from "./context/AuthContext";
 import FirebaseProvider from "./context/FirebaseContext";
+import ProtectedRoute from "./router/PrivateRoute";
+import UploadExcel from "./components/Dashboard/UploadExcel";
+import PaginatedTable from "./components/Dashboard/PaginatedTable";
+import UploadForm from "./components/Dashboard/UploadForm";
+import DashboardHome from "./components/Dashboard/DashboardHome";
+// import ProtectedRoute from "./components/ProtectedRoute"; // Import ProtectedRoute
 
 const App = () => {
   return (
@@ -21,13 +27,22 @@ const App = () => {
             </Route>
 
             {/* Auth Routes */}
-            <Route path="/auth" element={<AuthLayout />}>
+            <Route path="/auth" element={<MainLayout />}>
               <Route path="login" element={<Login />} />
             </Route>
 
-            {/* Protected Routes */}
-            <Route path="/student" element={<MainLayout />}>
-              <Route path="details" element={<StudentDetails />} />
+            {/* Protected Route for Dashboard */}
+            <Route
+              path="/dashboard/*"
+              element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              }
+            >
+              <Route index element={<DashboardHome />} />
+              <Route path="uploadExcel" element={<UploadExcel />} />
+              <Route path="uploadForm" element={<UploadForm />} />
             </Route>
 
             {/* Fallback Route */}

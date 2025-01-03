@@ -1,17 +1,17 @@
 import React from "react";
-import { Link, Outlet } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import Footer from "../components/Footer";
-import Navbar from "../components/Navbar";
+import DashboardNav from "../components/Dashboard/DashboardNav";
 
-const MainLayout = () => {
+const DashboardLayout = () => {
   return (
     <div className="flex flex-col min-h-screen">
       {/* Navbar */}
-      <Navbar />
+      <DashboardNav />
 
       {/* Main Content */}
-      <main>
-        <Outlet /> 
+      <main className="min-h-screen">
+        <Outlet />
       </main>
       {/* Footer */}
       <Footer />
@@ -19,4 +19,4 @@ const MainLayout = () => {
   );
 };
 
-export default MainLayout;
+export default DashboardLayout;
