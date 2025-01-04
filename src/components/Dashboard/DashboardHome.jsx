@@ -142,6 +142,9 @@ const DashboardHome = () => {
                     Address
                   </th>
                   <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
+                    Courier Partner
+                  </th>
+                  <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
                     Actions
                   </th>
                 </tr>
@@ -156,7 +159,7 @@ const DashboardHome = () => {
                       {editingRow === entry.id ? (
                         <input
                           type="text"
-                          value={editedData.name}
+                          value={editedData.name || ""}
                           onChange={(e) => handleChange(e, "name")}
                           className="border px-2 py-1 rounded-md"
                         />
@@ -168,7 +171,7 @@ const DashboardHome = () => {
                       {editingRow === entry.id ? (
                         <input
                           type="text"
-                          value={editedData.mobileNumber}
+                          value={editedData.mobileNumber || ""}
                           onChange={(e) => handleChange(e, "mobileNumber")}
                           className="border px-2 py-1 rounded-md"
                         />
@@ -180,7 +183,7 @@ const DashboardHome = () => {
                       {editingRow === entry.id ? (
                         <input
                           type="text"
-                          value={editedData.batchName}
+                          value={editedData.batchName || ""}
                           onChange={(e) => handleChange(e, "batchName")}
                           className="border px-2 py-1 rounded-md"
                         />
@@ -192,7 +195,7 @@ const DashboardHome = () => {
                       {editingRow === entry.id ? (
                         <input
                           type="text"
-                          value={editedData.trackingId}
+                          value={editedData.trackingId || ""}
                           onChange={(e) => handleChange(e, "trackingId")}
                           className="border px-2 py-1 rounded-md"
                         />
@@ -204,12 +207,24 @@ const DashboardHome = () => {
                       {editingRow === entry.id ? (
                         <input
                           type="text"
-                          value={editedData.address}
+                          value={editedData.address || ""}
                           onChange={(e) => handleChange(e, "address")}
                           className="border px-2 py-1 rounded-md"
                         />
                       ) : (
                         entry.address
+                      )}
+                    </td>
+                    <td className="px-4 py-2 text-sm text-gray-700">
+                      {editingRow === entry.id ? (
+                        <input
+                          type="text"
+                          value={editedData.courierPartner || ""}
+                          onChange={(e) => handleChange(e, "courierPartner")}
+                          className="border px-2 py-1 rounded-md"
+                        />
+                      ) : (
+                        entry.courierPartner
                       )}
                     </td>
                     <td className="px-4 py-2 text-sm text-gray-700 flex space-x-2 justify-center">

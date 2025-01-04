@@ -10,7 +10,6 @@ import AuthProvider from "./context/AuthContext";
 import FirebaseProvider from "./context/FirebaseContext";
 import ProtectedRoute from "./router/PrivateRoute";
 import UploadExcel from "./components/Dashboard/UploadExcel";
-import PaginatedTable from "./components/Dashboard/PaginatedTable";
 import UploadForm from "./components/Dashboard/UploadForm";
 import DashboardHome from "./components/Dashboard/DashboardHome";
 // import ProtectedRoute from "./components/ProtectedRoute"; // Import ProtectedRoute

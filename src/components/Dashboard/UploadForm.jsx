@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import * as XLSX from "xlsx";
 import { db } from "../../firebase/config";
-import { collection, addDoc } from "firebase/firestore";
+import { collection, getDoc, setDoc, doc } from "firebase/firestore";
 
 const UploadForm = () => {
   const [file, setFile] = useState(null);
@@ -15,6 +15,7 @@ const UploadForm = () => {
     batchName: "",
     address: "",
     trackingId: "",
+    courierPartner: "",
   });
 
   // Handle form input changes
@@ -39,23 +40,31 @@ const UploadForm = () => {
     setMessage("");
 
     try {
-      const collectionRef = collection(db, "materialTrackingId");
-      await addDoc(collectionRef, {
-        name: formData.studentName || "",
-        mobileNumber: formData.mobileNumber || "",
-        batchName: formData.batchName || "",
-        address: formData.address || "",
-        trackingId: formData.trackingId || "",
-      });
+      const docRef = doc(db, "materialTrackingId", formData.trackingId);
+      const docSnap = await getDoc(docRef);
 
-      setMessage("Single entry uploaded successfully!");
-      setFormData({
-        studentName: "",
-        mobileNumber: "",
-        batchName: "",
-        address: "",
-        trackingId: "",
-      }); // Reset the form after successful submission
+      if (docSnap.exists()) {
+        setMessage("Tracking ID already exists. Please use a unique ID.");
+      } else {
+        await setDoc(docRef, {
+          name: formData.studentName || "",
+          mobileNumber: formData.mobileNumber || "",
+          batchName: formData.batchName || "",
+          address: formData.address || "",
+          trackingId: formData.trackingId || "",
+          courierPartner: formData.courierPartner || "",
+        });
+
+        setMessage("Single entry uploaded successfully!");
+        setFormData({
+          studentName: "",
+          mobileNumber: "",
+          batchName: "",
+          address: "",
+          trackingId: "",
+          courierPartner: "",
+        }); // Reset the form after successful submission
+      }
     } catch (err) {
       setMessage("Failed to upload single data. Please try again.");
       console.error("Error uploading single entry:", err);
@@ -98,20 +107,27 @@ const UploadForm = () => {
       setTotalRows(jsonData.length);
 
       // Upload data to Firebase
-      const collectionRef = collection(db, "materialTrackingId");
-
       for (const [index, row] of jsonData.entries()) {
-        // Upload row data to Firebase
-        await addDoc(collectionRef, {
+        const trackingId = row["TRACKING ID"] || "";
+        const docRef = doc(db, "materialTrackingId", trackingId);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          console.warn(`Skipping duplicate tracking ID: ${trackingId}`);
+          continue; // Skip duplicate tracking IDs
+        }
+
+        await setDoc(docRef, {
           name: row["Student Name"] || "",
           mobileNumber: row["Mobile Number"] || "",
           batchName: row["Batch Name"] || "",
           address: row["Full Delivery Address"] || "",
-          trackingId: row["TRACKING ID"] || "",
+          trackingId: trackingId,
+          courierPartner: row["Courier Partner"] || "",
         });
 
         // Update the uploaded rows count
-        setUploadedRows(index + 1); // Increment based on current index
+        setUploadedRows((prev) => prev + 1);
       }
 
       setMessage("Data uploaded successfully!");
@@ -220,6 +236,23 @@ const UploadForm = () => {
               required
             />
           </div>
+          <div>
+            <label
+              htmlFor="courierPartner"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Courier Partner
+            </label>
+            <input
+              type="text"
+              id="courierPartner"
+              name="courierPartner"
+              value={formData.courierPartner}
+              onChange={handleFormChange}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              required
+            />
+          </div>
           <button
             type="submit"
             disabled={loading}
@@ -261,7 +294,7 @@ const UploadForm = () => {
           <button
             onClick={handleFileUpload}
             disabled={loading || !file}
-            className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${
+            className={`mt-4 w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${
               loading
                 ? "bg-gray-400 cursor-not-allowed"
                 : "bg-green-600 hover:bg-green-700"
@@ -273,25 +306,20 @@ const UploadForm = () => {
               "Upload Excel File"
             )}
           </button>
-
-          {message && (
-            <p className="mt-4 text-sm text-center text-gray-700">{message}</p>
-          )}
-
-          {totalRows > 0 && (
-            <div className="mt-4">
-              <p className="text-sm font-medium text-center text-gray-700">
-                {uploadedRows}/{totalRows} uploaded
-              </p>
-              <div className="w-full bg-gray-200 rounded-full h-2.5 mt-2">
-                <div
-                  className="bg-blue-600 h-2.5 rounded-full"
-                  style={{ width: `${(uploadedRows / totalRows) * 100}%` }}
-                ></div>
-              </div>
-            </div>
-          )}
         </div>
+
+        {/* Status and Progress */}
+        {message && (
+          <div className="mt-4 text-center text-sm text-gray-600">
+            {message}
+          </div>
+        )}
+
+        {totalRows > 0 && (
+          <div className="mt-2 text-center text-sm text-gray-600">
+            Uploaded {uploadedRows} of {totalRows} rows.
+          </div>
+        )}
       </div>
     </div>
   );

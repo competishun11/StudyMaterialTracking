@@ -2,14 +2,13 @@ import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useFirebase } from "../context/FirebaseContext";
-import { logout, signInWithGoogle } from "../firebase/auth";
+import {    signInWithGoogle } from "../firebase/auth";
 import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { db } from "../firebase/config";
 
 const Login = () => {
   const navigate = useNavigate();
-  const { auth } = useFirebase();
-  const { login } = useAuth();
+  const { login,logout } = useAuth();
   const location = useLocation();
   const [loading, setLoading] = useState(false);
   const from = location.state?.from?.pathname || "/dashboard";

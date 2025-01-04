@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { db } from "../firebase/config"; // Make sure the Firebase config is correctly imported
+import { db } from "../firebase/config"; // Ensure the Firebase config is correctly imported
 import { collection, query, where, getDocs } from "firebase/firestore"; // Import necessary Firestore functions
 import LoginForm from "../components/Form/LoginForm";
 
@@ -10,41 +10,35 @@ const Home = () => {
   const handleFormSubmit = async (mobileNumber) => {
     setMessage("Fetching details...");
 
-    // Convert mobileNumber to string for uniform query
     const mobileNumberString = String(mobileNumber);
 
     try {
-      // Query for mobileNumber as string
       const studentQueryString = query(
         collection(db, "materialTrackingId"),
         where("mobileNumber", "==", mobileNumberString)
       );
 
-      // Query for mobileNumber as number (if necessary)
-      const studentQueryNumber = query(
-        collection(db, "materialTrackingId"),
-        where("mobileNumber", "==", Number(mobileNumber))
-      );
-
-      // Fetch documents using both queries
       const querySnapshotString = await getDocs(studentQueryString);
-      const querySnapshotNumber = await getDocs(studentQueryNumber);
 
       if (!querySnapshotString.empty) {
         const studentData = querySnapshotString.docs[0].data();
-        // console.log(studentData);
         setStudentDetails(studentData);
-        setMessage(`Details for mobile number: ${mobileNumberString}`);
-      } else if (!querySnapshotNumber.empty) {
-        const studentData = querySnapshotNumber.docs[0].data();
-        setStudentDetails(studentData);
-        // console.log(studentData);
         setMessage(`Details for mobile number: ${mobileNumberString}`);
       } else {
         setMessage("No details found for this mobile number.");
       }
     } catch (error) {
       setMessage("Error fetching details. Please try again.");
+    }
+  };
+
+  const getTrackingUrl = (courierPartner, trackingId) => {
+    if (courierPartner === "India Post") {
+      return "https://www.indiapost.gov.in/_layouts/15/dop.portal.tracking/trackconsignment.aspx";
+    } else if (courierPartner === "Delhivery") {
+      return `https://www.delhivery.com/track/package/${trackingId}`;
+    } else {
+      return "#";
     }
   };
 
@@ -92,12 +86,21 @@ const Home = () => {
                   </td>
                 </tr>
                 <tr>
+                  <td className="py-2 px-4 border-b">Courier Partner</td>
                   <td className="py-2 px-4 border-b">
-                    Track on Indian Postal Website
+                    {studentDetails.courierPartner}
+                  </td>
+                </tr>
+                <tr>
+                  <td className="py-2 px-4 border-b">
+                    Track on Courier Website
                   </td>
                   <td className="py-2 px-4 border-b">
                     <a
-                      href="https://www.indiapost.gov.in/_layouts/15/dop.portal.tracking/trackconsignment.aspx"
+                      href={getTrackingUrl(
+                        studentDetails.courierPartner,
+                        studentDetails.trackingId
+                      )}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-blue-600"

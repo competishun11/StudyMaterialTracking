@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import * as XLSX from "xlsx";
 import { db } from "../../firebase/config";
-import { collection, addDoc } from "firebase/firestore";
+import { doc, setDoc, getDoc, collection } from "firebase/firestore";
 
 const UploadExcel = () => {
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
-  const [totalRows, setTotalRows] = useState(0); // To track total rows in the Excel sheet
-  const [uploadedRows, setUploadedRows] = useState(0); // To track the number of uploaded rows
+  const [totalRows, setTotalRows] = useState(0);
+  const [uploadedRows, setUploadedRows] = useState(0);
 
   useEffect(() => {
     console.log("loading", loading);
@@ -24,13 +24,11 @@ const UploadExcel = () => {
       return;
     }
 
-    console.log("starting upload");
     setLoading(true);
     setMessage("");
-    setUploadedRows(0); // Reset the uploaded rows count
+    setUploadedRows(0);
 
     try {
-      // Promisify the FileReader
       const readerResult = await new Promise((resolve, reject) => {
         const reader = new FileReader();
 
@@ -44,27 +42,40 @@ const UploadExcel = () => {
       const sheetName = workbook.SheetNames[0];
       const sheet = workbook.Sheets[sheetName];
 
-      // Convert Excel to JSON
       const jsonData = XLSX.utils.sheet_to_json(sheet);
-
-      // Set total rows to be uploaded
       setTotalRows(jsonData.length);
 
-      // Upload data to Firebase
       const collectionRef = collection(db, "materialTrackingId");
 
       for (const [index, row] of jsonData.entries()) {
-        // Upload row data to Firebase
-        await addDoc(collectionRef, {
+        const trackingId = row["TRACKING ID"] || "";
+        const courierPartner = row["Courier Partner"] || "";
+
+        if (!trackingId) {
+          console.warn(`Skipping row ${index + 1}: Missing TRACKING ID`);
+          continue;
+        }
+
+        const docRef = doc(collectionRef, trackingId);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          console.warn(
+            `Skipping row ${index + 1}: Duplicate TRACKING ID ${trackingId}`
+          );
+          continue;
+        }
+
+        await setDoc(docRef, {
           name: row["Student Name"] || "",
           mobileNumber: row["Mobile Number"] || "",
           batchName: row["Batch Name"] || "",
           address: row["Full Delivery Address"] || "",
-          trackingId: row["TRACKING ID"] || "",
+          trackingId: trackingId,
+          courierPartner: courierPartner,
         });
 
-        // Update the uploaded rows count
-        setUploadedRows(index + 1); // Increment based on current index
+        setUploadedRows(index + 1);
       }
 
       setMessage("Data uploaded successfully!");
@@ -114,7 +125,6 @@ const UploadExcel = () => {
           )}
         </button>
 
-        {/* Display progress */}
         {loading && (
           <div className="mt-4">
             <p className="text-sm font-medium text-center text-gray-700">
@@ -129,7 +139,6 @@ const UploadExcel = () => {
           </div>
         )}
 
-        {/* Display message */}
         {message && (
           <p
             className={`text-sm font-medium text-center ${
