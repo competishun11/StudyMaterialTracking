@@ -19,7 +19,8 @@ const App = () => {
   return (
     <FirebaseProvider>
       <AuthProvider>
-        <Router>
+        {/* <Router basename="/StudyMaterialTracking"> */}
+        <Router >
           <Routes>
             {/* Public Routes */}
             <Route path="/" element={<MainLayout />}>

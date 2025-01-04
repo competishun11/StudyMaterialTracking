@@ -1,21 +1,22 @@
-import { auth } from "./config";
-import {
-  signOut,
-  signInWithPopup,
-  GoogleAuthProvider,
-} from "firebase/auth";
+import { auth, db } from "./config";
+import { signOut, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
+// import { db } from "./firebase/config"; // Assuming you are using Firebase Firestore
+
 const provider = new GoogleAuthProvider();
 
 export const signInWithGoogle = async () => {
   try {
     const result = await signInWithPopup(auth, provider);
     const user = result.user;
-    return user;
+    console.log("Login successful:", user.displayName); 
+    return user; // Admin login successful
+
   } catch (error) {
-    throw error;
+    console.error("Login failed:", error.message);
+    throw error; // If the user is not admin or any other error
   }
 };
-
 
 // Function to log out the current user
 export const logout = async () => {

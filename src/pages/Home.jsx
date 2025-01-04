@@ -32,13 +32,13 @@ const Home = () => {
 
       if (!querySnapshotString.empty) {
         const studentData = querySnapshotString.docs[0].data();
-        console.log(studentData);
+        // console.log(studentData);
         setStudentDetails(studentData);
         setMessage(`Details for mobile number: ${mobileNumberString}`);
       } else if (!querySnapshotNumber.empty) {
         const studentData = querySnapshotNumber.docs[0].data();
         setStudentDetails(studentData);
-        console.log(studentData);
+        // console.log(studentData);
         setMessage(`Details for mobile number: ${mobileNumberString}`);
       } else {
         setMessage("No details found for this mobile number.");
@@ -60,8 +60,8 @@ const Home = () => {
         </div>
 
         {studentDetails && (
-          <div className="mt-8">
-            <table className="student-info-table w-full border-collapse">
+          <div className="mt-8 w-full flex justify-center">
+            <table className="student-info-table w-full md:max-w-[80%] border-collapse">
               <thead>
                 <tr>
                   <th className="text-left py-2 px-4 border-b">Particulars</th>
@@ -71,9 +71,7 @@ const Home = () => {
               <tbody>
                 <tr>
                   <td className="py-2 px-4 border-b">Student Name</td>
-                  <td className="py-2 px-4 border-b">
-                    {studentDetails.name}
-                  </td>
+                  <td className="py-2 px-4 border-b">{studentDetails.name}</td>
                 </tr>
                 <tr>
                   <td className="py-2 px-4 border-b">Batch Name</td>
