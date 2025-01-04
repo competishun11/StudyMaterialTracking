@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/StudyMaterialTracking/static/css/main.ef20d551.css",
-    "main.js": "/StudyMaterialTracking/static/js/main.e07b2ecb.js",
+    "main.js": "/StudyMaterialTracking/static/js/main.38a2d6e4.js",
     "static/media/logo.png": "/StudyMaterialTracking/static/media/logo.ec5053f1e72ec55ef360.png",
     "index.html": "/StudyMaterialTracking/index.html",
     "main.ef20d551.css.map": "/StudyMaterialTracking/static/css/main.ef20d551.css.map",
-    "main.e07b2ecb.js.map": "/StudyMaterialTracking/static/js/main.e07b2ecb.js.map"
+    "main.38a2d6e4.js.map": "/StudyMaterialTracking/static/js/main.38a2d6e4.js.map"
   },
   "entrypoints": [
     "static/css/main.ef20d551.css",
-    "static/js/main.e07b2ecb.js"
+    "static/js/main.38a2d6e4.js"
   ]
 }
