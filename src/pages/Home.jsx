@@ -33,10 +33,14 @@ const Home = () => {
   };
 
   const getTrackingUrl = (courierPartner, trackingId) => {
+    courierPartner = courierPartner.trim();
+    console.log(courierPartner);
     if (courierPartner === "India Post") {
       return "https://www.indiapost.gov.in/_layouts/15/dop.portal.tracking/trackconsignment.aspx";
     } else if (courierPartner === "Delhivery") {
       return `https://www.delhivery.com/track/package/${trackingId}`;
+    } else if (courierPartner === "ecomexpress"){
+      return `https://www.ecomexpress.in/tracking/?awb_field=${trackingId}`;
     } else {
       return "#";
     }

@@ -47,12 +47,12 @@ const UploadForm = () => {
         setMessage("Tracking ID already exists. Please use a unique ID.");
       } else {
         await setDoc(docRef, {
-          name: formData.studentName || "",
-          mobileNumber: formData.mobileNumber || "",
-          batchName: formData.batchName || "",
-          address: formData.address || "",
-          trackingId: formData.trackingId || "",
-          courierPartner: formData.courierPartner || "",
+          name: formData.studentName.trim() || "",
+          mobileNumber: formData.mobileNumber.toString().trim() || "",
+          batchName: formData.batchName.trim() || "",
+          address: formData.address.trim() || "",
+          trackingId: formData.trackingId.trim() || "",
+          courierPartner: formData.courierPartner.trim() || "",
         });
 
         setMessage("Single entry uploaded successfully!");
@@ -118,12 +118,12 @@ const UploadForm = () => {
         }
 
         await setDoc(docRef, {
-          name: row["Student Name"] || "",
-          mobileNumber: row["Mobile Number"] || "",
-          batchName: row["Batch Name"] || "",
-          address: row["Full Delivery Address"] || "",
+          name: row["Student Name"].trim() || "",
+          mobileNumber: row["Mobile Number"].toString().trim() || "",
+          batchName: row["Batch Name"].trim() || "",
+          address: row["Full Delivery Address"].trim() || "",
           trackingId: trackingId,
-          courierPartner: row["Courier Partner"] || "",
+          courierPartner: row["Courier Partner"].trim() || "",
         });
 
         // Update the uploaded rows count

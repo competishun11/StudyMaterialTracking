@@ -44,18 +44,19 @@ const UploadExcel = () => {
 
       const jsonData = XLSX.utils.sheet_to_json(sheet);
       setTotalRows(jsonData.length);
+      // console.log(jsonData);
 
       const collectionRef = collection(db, "materialTrackingId");
 
       for (const [index, row] of jsonData.entries()) {
-        const trackingId = row["TRACKING ID"] || "";
-        const courierPartner = row["Courier Partner"] || "";
+        const trackingId = row["TRACKING ID"].toString().trim() || "";
+        const courierPartner = row["Courier Partner"].trim() || "";
 
         if (!trackingId) {
           console.warn(`Skipping row ${index + 1}: Missing TRACKING ID`);
           continue;
         }
-
+        console.log(trackingId);
         const docRef = doc(collectionRef, trackingId);
         const docSnap = await getDoc(docRef);
 
@@ -68,11 +69,11 @@ const UploadExcel = () => {
 
         await setDoc(docRef, {
           name: row["Student Name"] || "",
-          mobileNumber: row["Mobile Number"] || "",
+          mobileNumber: row["Mobile Number"].toString() || "",
           batchName: row["Batch Name"] || "",
           address: row["Full Delivery Address"] || "",
           trackingId: trackingId,
-          courierPartner: courierPartner,
+          courierPartner: courierPartner.trim(),
         });
 
         setUploadedRows(index + 1);
